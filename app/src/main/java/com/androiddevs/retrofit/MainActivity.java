@@ -1,6 +1,7 @@
 package com.androiddevs.retrofit;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
                 adapter = new RecyclerViewAdapter(MainActivity.this, response.body());
                 rvRetroItems.setLayoutManager(new LinearLayoutManager(MainActivity.this));
                 rvRetroItems.setAdapter(adapter);
+
+                new ItemTouchHelper(new SwipeToDeleteCallback(MainActivity.this, adapter))
+                        .attachToRecyclerView(rvRetroItems);
             }
 
             @Override

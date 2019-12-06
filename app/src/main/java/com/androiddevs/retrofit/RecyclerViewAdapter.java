@@ -1,5 +1,6 @@
 package com.androiddevs.retrofit;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
@@ -49,6 +51,33 @@ public class RecyclerViewAdapter extends
     @Override
     public int getItemCount() {
         return dataList.size();
+    }
+
+    private RetroItem lastDeletedItem;
+    private int lastDeletedItemIndex;
+
+    public void deleteItem(int position) {
+        RetroItem deletedItem = dataList.get(position);
+        lastDeletedItem = new RetroItem(deletedItem.getAlbumId(), deletedItem.getId(),
+                deletedItem.getTitle(), deletedItem.getUrl(), deletedItem.getThumbnailUrl());
+        lastDeletedItemIndex = position;
+
+        dataList.remove(deletedItem);
+        notifyItemRemoved(position);
+        displaySnackbar();
+    }
+
+    private void displaySnackbar() {
+        View view = ((Activity) context).findViewById(R.id.constraintLayout);
+        Snackbar snackbar = Snackbar.make(view, "Successfully deleted item", Snackbar.LENGTH_LONG);
+
+        snackbar.setAction("Undo", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dataList.add(lastDeletedItemIndex, lastDeletedItem);
+                notifyItemInserted(lastDeletedItemIndex);
+            }
+        }).show();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
